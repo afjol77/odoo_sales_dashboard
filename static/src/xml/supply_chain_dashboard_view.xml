@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="supply_chain_dashboard_template" xml:space="preserve">
+    <t t-name="supply_chain_dashboard" owl="1">
+        <div>
+            Hello From Dashboard
+            <br/>
+            <t t-esc="test"/>
+        </div>
+    </t>
+</templates>
