@@ -27,6 +27,10 @@ export class SalesDashboard extends Component {
                    this.fulfillment_efficiency = data.fulfillment_efficiency;
                    this.sales_by_customer = data.sales_by_customer;
                    this.sales_funnel = data.sales_funnel;
+                   this.conversion_rate = data.conversion_rate;
+                   this.average_lead_to_order_time = data.average_lead_to_order_time;
+                   this.average_profit_margin = data.average_profit_margin;
+                   this.top_sales_reps = data.top_sales_reps;
             });
         });
 
@@ -139,19 +143,21 @@ export class SalesDashboard extends Component {
 
 
     renderFulfillmentEfficiency() {
-    const leadTimes = this.fulfillment_efficiency.map(item => item.lead_time);
-    const averageLeadTime = leadTimes.reduce((a, b) => a + b, 0) / leadTimes.length;
+    const onTimeCount = this.fulfillment_efficiency.on_time_count;
+    const delayedCount = this.fulfillment_efficiency.delayed_count;
+    const totalCount = onTimeCount + delayedCount;
 
-    const efficiencyPercentage = Math.max(0, Math.min(100, (1 - (averageLeadTime / 7)) * 100)); // Example: target of 7 days for ideal efficiency
+    // If no deliveries, set to 0% efficiency
+    const efficiencyPercentage = totalCount > 0 ? (onTimeCount / totalCount) * 100 : 0;
 
     // Render pie chart
     new Chart(this.canvasFulfillmentEfficiency.el, {
         type: 'pie',
         data: {
-            labels: ['Fulfillment Efficiency'],
+            labels: ['On-time Deliveries', 'Delayed Deliveries'],
             datasets: [{
                 data: [efficiencyPercentage, 100 - efficiencyPercentage],
-                backgroundColor: ['#4CAF50', '#e0e0e0'], // Green for good, light gray for the rest
+                backgroundColor: ['#4CAF50', '#FF6F61'], // Green for on-time, red for delayed
                 borderWidth: 0
             }]
         },
@@ -159,10 +165,18 @@ export class SalesDashboard extends Component {
             responsive: true,
             plugins: {
                 legend: {
-                    display: false
+                    position: 'top',
+                    labels: {
+                        boxWidth: 20,
+                        padding: 10
+                    }
                 },
                 tooltip: {
-                    enabled: false
+                    enabled: true
+                },
+                title: {
+                    display: true,
+                    text: `Fulfillment Efficiency: ${efficiencyPercentage.toFixed(2)}%`
                 }
             }
         }
@@ -173,40 +187,43 @@ export class SalesDashboard extends Component {
     const customers = this.sales_by_customer.map(item => item.customer_name);
     const salesVolumes = this.sales_by_customer.map(item => item.sales_volume);
 
-    // Render bar chart
     new Chart(this.canvasSalesByCustomer.el, {
-        type: 'bar',
-        data: {
-            labels: customers, // Customer segments
-            datasets: [{
-                label: 'Sales Volume',
-                data: salesVolumes, // Sales data per segment
-                backgroundColor: '#4CAF50', // Green color for bars
-                borderColor: '#388E3C', // Darker green for border
-                borderWidth: 1
-            }]
+    type: 'bar',
+    data: {
+        labels: customers,
+        datasets: [{
+            label: 'Sales Volume',
+            data: salesVolumes,
+            backgroundColor: '#42A5F5',
+            borderColor: '#1E88E5',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        indexAxis: 'y', // This flips the axes to create a horizontal bar chart
+        scales: {
+            x: {
+                beginAtZero: true
+            }
         },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true, // Ensure the y-axis starts at 0
-                    ticks: {
-                        stepSize: 5000 // Adjust step size to match the sales volume range
-                    }
-                }
+        plugins: {
+            legend: {
+                display: false
             },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    enabled: true
-                }
+            tooltip: {
+                enabled: true
+            },
+            title: {
+                display: true,
+                text: 'Key Customers by Sales Volume'
             }
         }
+    }
     });
-}
+
+
+    }
 
 }
 SalesDashboard.template = 'sales_dashboard';

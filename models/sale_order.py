@@ -34,17 +34,25 @@ class SaleOrder(models.Model):
         deliveries = self.env['stock.picking'].search([
             ('state', '=', 'done'), ('picking_type_id.code', '=', 'outgoing')
         ])
-        fulfillment_efficiency = []
-        for picking in deliveries:
-            lead_time = (picking.date_done - picking.scheduled_date).days if picking.scheduled_date else 0
-            fulfillment_efficiency.append({
-                'sale_order': picking.origin,
-                'scheduled_date': picking.scheduled_date.strftime('%Y-%m-%d') if picking.scheduled_date else None,
-                'actual_date': picking.date_done.strftime('%Y-%m-%d') if picking.date_done else None,
-                'lead_time': lead_time
-            })
 
-        # Sales by Customer
+        total_deliveries = len(deliveries)
+        on_time_count = 0
+        delayed_count = 0
+        ideal_lead_time = 7  # Target lead time for efficiency (7 days)
+
+        for picking in deliveries:
+            if picking.scheduled_date and picking.date_done:
+                lead_time = (picking.date_done - picking.scheduled_date).days
+                if lead_time <= ideal_lead_time:
+                    on_time_count += 1
+                else:
+                    delayed_count += 1
+
+        # Calculating efficiency percentage
+        efficiency_percentage = (on_time_count / total_deliveries) * 100 if total_deliveries > 0 else 0
+
+
+        # Sales by Customer (Top 5)
         sales_by_customer = []
         sales_data = self.env['sale.order'].read_group(
             [('state', '=', 'sale')],
@@ -52,8 +60,11 @@ class SaleOrder(models.Model):
             ['partner_id']
         )
 
-        for data in sales_data:
-            customer = data['partner_id'][1]
+        # Sorting by sales volume and limiting to top 5
+        sorted_sales_data = sorted(sales_data, key=lambda x: x['amount_total'], reverse=True)[:5]
+
+        for data in sorted_sales_data:
+            customer = data['partner_id'][1] if data['partner_id'] else 'Unknown Customer'
             sales_volume = data['amount_total']
             sales_by_customer.append({
                 'customer_name': customer,
@@ -67,22 +78,78 @@ class SaleOrder(models.Model):
             'quotations': self.env['sale.order'].search_count([('state', '=', 'draft')]),
             'confirmed_sales': self.env['sale.order'].search_count([('state', '=', 'sale')])
         }
-        print(monthly_sales)
-        print(list(product_sales.values()))
-        print(fulfillment_efficiency)
-        print(sales_by_customer)
-        print(sales_funnel)
+
+        # Conversion Rate
+        conversion_count = sales_funnel['confirmed_sales']
+        total_opportunities = sales_funnel['opportunities']
+        conversion_rate = (conversion_count / total_opportunities * 100) if total_opportunities > 0 else 0
+
+        # Lead-to-Order Time
+        lead_to_order_times = []
+        crm_records = self.env['crm.lead'].search([('probability', '=', 100)])  # Closed opportunities
+        for record in crm_records:
+            lead_creation_date = record.create_date
+            sale_order = self.env['sale.order'].search([('origin', '=', record.name), ('state', '=', 'sale')], limit=1)
+            if sale_order and sale_order.date_order:
+                lead_to_order_time = (sale_order.date_order - lead_creation_date).days
+                lead_to_order_times.append(lead_to_order_time)
+        average_lead_to_order_time = sum(lead_to_order_times) / len(lead_to_order_times) if lead_to_order_times else 0
+
+        # Profit Margin per Sale
+        profit_margins = []
+        for order in sales_orders:
+            total_revenue = order.amount_total
+            total_cost = sum(
+                line.product_id.standard_price * line.product_uom_qty for line in order.order_line
+            )
+            profit_margin = ((total_revenue - total_cost) / total_revenue * 100) if total_revenue > 0 else 0
+            profit_margins.append(profit_margin)
+
+        average_profit_margin = sum(profit_margins) / len(profit_margins) if profit_margins else 0
+
+        # Fetch sale orders in the "sale" state
+        sales_orders = self.env['sale.order'].search([('state', '=', 'sale')])
+
+        # Aggregate sales by sales representatives
+        sales_rep_dict = {}
+
+        for order in sales_orders:
+            rep_id = order.user_id.id
+            rep_name = order.user_id.name if order.user_id else 'Unassigned'
+            sales_volume = order.amount_total
+
+            if rep_id in sales_rep_dict:
+                sales_rep_dict[rep_id]['sales_volume'] += sales_volume
+            else:
+                sales_rep_dict[rep_id] = {
+                    'sales_rep_name': rep_name,
+                    'sales_volume': sales_volume
+                }
+
+        # Convert the dictionary to a sorted list and limit to top 5
+        sorted_sales_reps = sorted(sales_rep_dict.values(), key=lambda x: x['sales_volume'], reverse=True)[:5]
+
+        # Add an ID for t-key in the template
+        top_sales_reps = [{'id': idx + 1, **rep} for idx, rep in enumerate(sorted_sales_reps)]
 
         # Return all data as a dictionary
         return {
             'monthly_sales': monthly_sales,
             'top_selling_products': list(product_sales.values()),
-            'fulfillment_efficiency': fulfillment_efficiency,
+            'fulfillment_efficiency': {
+                'on_time_count': on_time_count,
+                'delayed_count': delayed_count,
+                'efficiency_percentage': efficiency_percentage
+            },
             'sales_by_customer': sales_by_customer,
             'sales_funnel':  [
                         {'id': 1,'name': 'Leads', 'count': sales_funnel['leads']},
                         {'id': 2,'name': 'Opportunities', 'count': sales_funnel['opportunities']},
                         {'id': 3,'name': 'Quotations', 'count': sales_funnel['quotations']},
                         {'id': 4,'name': 'Confirmed Sales', 'count': sales_funnel['confirmed_sales']},
-                    ]
+                    ],
+            'conversion_rate': round(conversion_rate, 2),
+            'average_lead_to_order_time': round(average_lead_to_order_time, 2),
+            'average_profit_margin': round(average_profit_margin, 2),
+            'top_sales_reps': top_sales_reps,
         }
