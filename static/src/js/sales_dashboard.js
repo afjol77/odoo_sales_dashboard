@@ -22,6 +22,7 @@ export class SalesDashboard extends Component {
             await loadBundle("web.chartjs_lib");
             await this.orm.call( 'sale.order', 'get_sales_dashboard_data').then((data) => {
                     // Charts Section
+                   this.total_sales_amount = data.total_sales_amount;
                    this.monthly_sales = data.monthly_sales;
                    this.top_selling_products = data.top_selling_products;
                    this.fulfillment_efficiency = data.fulfillment_efficiency;
@@ -31,6 +32,7 @@ export class SalesDashboard extends Component {
                    this.average_lead_to_order_time = data.average_lead_to_order_time;
                    this.average_profit_margin = data.average_profit_margin;
                    this.top_sales_reps = data.top_sales_reps;
+                   this.currency_symbol = data.currency_symbol;
             });
         });
 
@@ -96,12 +98,15 @@ export class SalesDashboard extends Component {
 
     renderTopSellingProducts() {
     const productNames = [];
-    const salesQuantities = [];
+    const productRevenues = [];
 
-    // Extract product names and quantities from data
-    this.top_selling_products.forEach(product => {
+    const topProducts = this.top_selling_products
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 5);
+
+    topProducts.forEach(product => {
         productNames.push(product.product_name);
-        salesQuantities.push(product.quantity);
+        productRevenues.push(product.revenue);
     });
 
     new Chart(this.canvasTopSellingProducts.el, {
@@ -109,32 +114,98 @@ export class SalesDashboard extends Component {
         data: {
             labels: productNames,
             datasets: [{
-                label: 'Top Selling Products by Quantity',
-                data: salesQuantities,
-                backgroundColor: '#5932EA',
-                borderWidth: 0
+                label: `Revenue (${this.currency_symbol})`,
+                data: productRevenues,
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                ],
+                borderColor: '#777',
+                borderWidth: 2,
+                hoverBackgroundColor: '#FFC107',
+                hoverBorderColor: '#FF9800'
             }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'bottom',
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 14,
+                            weight: 'bold',
+                        },
+                        color: '#333'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => `${this.currency_symbol}${context.raw.toLocaleString()}`,
+                        title: (context) => context[0].label,
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Top 5 Products by Revenue',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    color: '#2C3E50'
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                    top: 20,
+                    bottom: 10
                 }
             },
             scales: {
                 x: {
+                    grid: {
+                        display: false
+                    },
                     title: {
                         display: true,
-                        text: 'Products'
+                        text: 'Product Names',
+                        font: {
+                            size: 14,
+                        },
+                        color: '#555'
+                    },
+                    ticks: {
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        },
+                        color: '#333'
                     }
                 },
                 y: {
+                    beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Quantity Sold'
+                        text: `Revenue (${this.currency_symbol})`,
+                        font: {
+                            size: 14,
+                        },
+                        color: '#555'
                     },
-                    beginAtZero: true
+                    ticks: {
+                        callback: (value) => `${this.currency_symbol}${value.toLocaleString()}`,
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        },
+                        color: '#333'
+                    },
+                    grid: {
+                        borderColor: '#ddd',
+                        color: '#eee'
+                    }
                 }
             }
         }

@@ -12,11 +12,13 @@ class SaleOrder(models.Model):
         # Monthly Sales Performance
         sales_orders = self.env['sale.order'].search([('state', '=', 'sale')])
         monthly_sales = {}
+        total_sales_amount = 0
         for order in sales_orders:
             month = order.date_order.strftime('%Y-%m')
             monthly_sales[month] = monthly_sales.get(month, 0) + order.amount_total
+            total_sales_amount += order.amount_total
 
-        # Top Selling Products by Quantity/Revenue
+        # Top Selling Products by Quantity/Revenue (limit to top 10)
         sale_lines = self.env['sale.order.line'].search([('order_id.state', '=', 'sale')])
         product_sales = {}
         for line in sale_lines:
@@ -29,6 +31,9 @@ class SaleOrder(models.Model):
                 }
             product_sales[product_id]['quantity'] += line.product_uom_qty
             product_sales[product_id]['revenue'] += line.price_total
+
+        # Sort by revenue and limit to top 10
+        top_selling_products = sorted(product_sales.values(), key=lambda x: x['revenue'], reverse=True)[:5]
 
         # Sales Fulfillment Efficiency
         deliveries = self.env['stock.picking'].search([
@@ -132,10 +137,12 @@ class SaleOrder(models.Model):
         # Add an ID for t-key in the template
         top_sales_reps = [{'id': idx + 1, **rep} for idx, rep in enumerate(sorted_sales_reps)]
 
+        currency = self.env.company.currency_id.symbol
         # Return all data as a dictionary
         return {
+            'total_sales_amount': total_sales_amount,
             'monthly_sales': monthly_sales,
-            'top_selling_products': list(product_sales.values()),
+            'top_selling_products': top_selling_products,
             'fulfillment_efficiency': {
                 'on_time_count': on_time_count,
                 'delayed_count': delayed_count,
@@ -152,4 +159,5 @@ class SaleOrder(models.Model):
             'average_lead_to_order_time': round(average_lead_to_order_time, 2),
             'average_profit_margin': round(average_profit_margin, 2),
             'top_sales_reps': top_sales_reps,
+            'currency_symbol': currency,
         }

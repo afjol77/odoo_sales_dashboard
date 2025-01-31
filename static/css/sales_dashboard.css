@@ -1,59 +1,98 @@
-/* sales_dashboard.css */
+/* Sales Dashboard Styles */
 .dashboard-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    gap: 40px;
+    gap: 30px;
+    padding: 40px;
+    background-color: #F9FAFB;
 }
 
-.card {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    text-align: center;
+/* Unified Style for All Sales Cards */
+.sales-card {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px 20px;
+    text-align: left;
+    border-radius: 15px;
+    font-size: 22px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    height: 150px;
+    justify-content: flex-end;
+    height: 250px; /* Consistent height */
 }
 
-.card h3 {
+.sales-card h3 {
     font-size: 18px;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.card p {
-    font-size: 22px;
-    color: #007BFF;
+    margin: 0;
+    color: #388E3C;
     font-weight: bold;
+    margin-bottom: 15px;
 }
 
-.card-icon {
+.sales-card .sales-card-icon {
+    font-size: 40px;
+    color: #388E3C;
     position: absolute;
     top: 10px;
     right: 10px;
+}
+
+.sales-card-amount, .funnel-count {
+    font-size: 24px;
+    color: #388E3C;
+    font-weight: bold;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+/* Light Blue */
+.light-blue {
+    background-color: #E1F5FE;
+}
+
+/* Light Green */
+.light-green {
+    background-color: #E8F5E9;
+}
+
+/* Light Yellow */
+.light-yellow {
+    background-color: #FFF9C4;
+}
+
+/* Light Orange */
+.light-orange {
+    background-color: #FFE0B2;
+}
+
+/* Light Purple */
+.light-purple {
+    background-color: #F3E5F5;
+}
+
+/* Funnel Icon Style */
+.funnel-icon {
     font-size: 30px;
-    color: #FF5733; /* Icon color */
+    color: #8E24AA;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
-canvas {
-    width: 100% !important;
-    height: auto !important;
+/* Sales Funnel Section */
+.sales-funnel-section {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 15px;
 }
 
-/* Responsive design adjustments */
+/* Responsive Design */
 @media (max-width: 768px) {
-    .sales-funnel-cards {
+    .sales-funnel-section {
         flex-direction: column;
-        width: 100%;
-        align-items: center;
     }
-    canvas {
-        width: 100% !important;
+
+    .sales-card {
+        width: 100%;
     }
 }
