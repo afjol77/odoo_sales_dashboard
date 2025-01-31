@@ -1,1 +1,1 @@
-# odoo_supply_chain_dashboard
+# odoo_sales_dashboard

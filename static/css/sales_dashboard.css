@@ -1,0 +1,59 @@
+/* sales_dashboard.css */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 40px;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 150px;
+}
+
+.card h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 22px;
+    color: #007BFF;
+    font-weight: bold;
+}
+
+.card-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    color: #FF5733; /* Icon color */
+}
+
+canvas {
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+    .sales-funnel-cards {
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+    canvas {
+        width: 100% !important;
+    }
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="sales_dashboard_template" xml:space="preserve">
+    <t t-name="sales_dashboard" owl="1">
+        <div class="parent-div"
+             style="height:100% !important; overflow-y:scroll !important; font-family:roboto; background-color: #F7F7F7;">
+            <link rel="stylesheet" type="text/css" href="odoo_sales_dashboard/static/src/css/sales_dashboard.css"/>
+            <t t-call="sales-section"/>
+        </div>
+    </t>
+
+    <t t-name="sales-section" owl="1">
+        <section id="sales_section" class="dashboard-container container">
+            <!-- Sales Funnel Cards Section: First Row (col-lg-3) -->
+            <div class="row mb-4">
+                <t t-foreach="sales_funnel" t-as="funnel" t-key="funnel.id">
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card" style="background-color: #F4F6F9; border-radius: 8px;">
+                            <div class="card-icon">
+                                <i class="fa fa-lead" aria-hidden="true"></i>
+                            </div>
+                            <h3><t t-esc="funnel.name"/></h3>
+                            <p><t t-esc="funnel.count"/></p>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+
+            <!-- Charts Section: Second Row (col-lg-6 for each canvas) -->
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <canvas t-ref="canvasMonthlySales"/>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <canvas t-ref="canvasTopSellingProducts"/>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <canvas t-ref="canvasFulfillmentEfficiency"/>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <canvas t-ref="canvasSalesByCustomer"/>
+                </div>
+            </div>
+        </section>
+    </t>
+
+</templates>

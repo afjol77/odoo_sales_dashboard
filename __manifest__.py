@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 {
-    'name' : 'Odoo Supply Chain Dashboard',
+    'name' : 'Odoo Sales Dashboard',
     'author': 'Afjol Hussain (afjolhussain59@gmail.com)',
     'version' : '17.0.1.0',
-    'summary': 'Odoo Supply Chain Dashboard',
+    'summary': 'Odoo Sales Dashboard',
     'sequence': -100,
-    'description': """ Custom dashboard module for supply chain management """,
+    'description': """ Custom dashboard module for Sales """,
     'category': 'dashboard',
     'website': 'https://www.odoo.com/',
-    'depends' : ['base','web', 'sale_management', 'sale', 'stock','crm', 'account', 'purchase'],
+    'depends' : ['base','web', 'sale_management', 'sale', 'stock','crm'],
     'data': [
         'views/dashboard_view.xml',
     ],
     'demo': [],
     'assets': {
         'web.assets_backend': [
-            'odoo_supply_chain_dashboard/static/src/js/supply_chain_dashboard.js',
-            'odoo_supply_chain_dashboard/static/src/xml/supply_chain_dashboard_view.xml',
+            'odoo_sales_dashboard/static/src/js/sales_dashboard.js',
+            'odoo_sales_dashboard/static/src/xml/sales_dashboard_view.xml',
         ],
         'web.assets_qweb': [
         ],

@@ -2,12 +2,12 @@
 <odoo>
     <data>
         <record id="action_dashboard_view" model="ir.actions.client">
-            <field name="name">Supply Chain Dashboard</field>
-            <field name="tag">supply_chain_dashboard</field>
+            <field name="name">Sales Dashboard</field>
+            <field name="tag">sales_dashboard</field>
         </record>
 
         <menuitem id="menu_dashboard_view"
-                name="Supply Chain Dashboard"
+                name="Sales Dashboard"
                 action="action_dashboard_view"
                 sequence="-100"/>
     </data>
