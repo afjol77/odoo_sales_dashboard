@@ -11,31 +11,14 @@
     <t t-name="sales-section" owl="1">
         <section id="sales_section" class="dashboard-container">
             <t t-call="sales_cards"/>
-
-            <!-- Charts Section: Second Row (col-lg-6 for each canvas) -->
-            <div class="row">
-                <div class="col-lg-6 mb-4">
-                    <canvas t-ref="canvasMonthlySales"/>
-                </div>
-                <div class="col-lg-6 mb-4">
-                    <canvas t-ref="canvasTopSellingProducts"/>
-                </div>
-                <div class="col-lg-6 mb-4">
-                    <canvas t-ref="canvasFulfillmentEfficiency"/>
-                </div>
-                <div class="col-lg-6 mb-4">
-                    <canvas t-ref="canvasSalesByCustomer"/>
-                </div>
-            </div>
-
+            <t t-call="sales_charts"/>
             <t t-call="top_sales_reps_section"/>
         </section>
     </t>
 
+<!--    Sales Cards-->
     <t t-name="sales_cards">
-    <!-- First Row: Total Sales and Operational Metrics -->
     <div class="row mb-3">
-        <!-- Total Sales Card -->
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card sales-card light-blue">
                 <div>
@@ -48,7 +31,6 @@
             </div>
         </div>
 
-        <!-- Average Profit Margin Card -->
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card sales-card light-orange">
                 <div>
@@ -61,7 +43,6 @@
             </div>
         </div>
 
-        <!-- Conversion Rate Card -->
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card sales-card light-green">
                 <div>
@@ -141,31 +122,89 @@
     </t>
 
 
+    <!-- Sales Charts Section -->
+    <t t-name="sales_charts">
+    <div class="row mb-3">
+        <div class="col-lg-6 col-md-12 mb-4">
+            <div class="card shadow-sm border-0" style="min-height: 450px;">
+                <div class="card-header text-center bg-primary">
+                    <h5 class="mb-0 text-white" style="font-size:18px;">Monthly Sales Performance</h5>
+                </div>
+                <div class="card-body">
+                    <canvas t-ref="canvasMonthlySales"></canvas>
+                </div>
+            </div>
+        </div>
 
+        <div class="col-lg-6 col-md-12 mb-4">
+            <div class="card shadow-sm border-0" style="min-height: 450px;">
+                <div class="card-header text-center bg-success">
+                    <h5 class="mb-0 text-white" style="font-size:18px;">Top Selling Products</h5>
+                </div>
+                <div class="card-body">
+                    <canvas t-ref="canvasTopSellingProducts"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-12 mb-4">
+            <div class="card shadow-sm border-0" style="min-height: 450px;">
+                <div class="card-header text-center bg-warning text-dark">
+                    <h5 class="mb-0 text-white" style="font-size:18px;">Fulfillment Efficiency</h5>
+                </div>
+                <div class="card-body">
+                    <canvas t-ref="canvasFulfillmentEfficiency" style="max-height:350px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-12 mb-4">
+            <div class="card shadow-sm border-0" style="min-height: 450px;">
+                <div class="card-header text-center bg-info text-white">
+                    <h5 class="mb-0 text-white" style="font-size:18px;">Sales by Customer</h5>
+                </div>
+                <div class="card-body">
+                    <canvas t-ref="canvasSalesByCustomer"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</t>
 
 
     <t t-name="top_sales_reps_section">
-        <div class="row">
-            <div class="col-lg-12 mb-4">
-                <table class="table table-bordered table-striped">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>Sales Representative</th>
-                            <th>Sales Volume</th>
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <!-- Title with underline -->
+            <h5 class="text-center fw-bold" style="font-size: 18px; border-bottom: 2px solid #3498db; padding-bottom: 10px; display: inline-block;">
+                Top Sales Representatives
+            </h5>
+
+            <table class="table table-bordered table-hover text-center shadow rounded">
+                <thead class="thead-light bg-primary text-white">
+                    <tr>
+                        <th class="p-3 fw-bold" style="font-size: 1.1rem;">Sales Representative</th>
+                        <th class="p-3 fw-bold" style="font-size: 1.1rem;">Sales Volume (<t t-esc="currency_symbol"/>)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="top_sales_reps" t-as="rep" t-key="rep.id">
+                        <tr class="align-middle">
+                            <td class="fw-bold p-3 text-dark">
+                                <t t-esc="rep.sales_rep_name"/>
+                            </td>
+                            <td class="p-3 text-success fw-bold">
+                                <t t-esc="rep.sales_volume"/>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="top_sales_reps" t-as="rep" t-key="rep.id">
-                            <tr>
-                                <td><t t-esc="rep.sales_rep_name"/></td>
-                                <td><t t-esc="rep.sales_volume" t-options="{'widget': 'monetary'}"/></td>
-                            </tr>
-                        </t>
-                    </tbody>
-                </table>
-            </div>
+                    </t>
+                </tbody>
+            </table>
         </div>
-    </t>
+    </div>
+</t>
+
+
 
 
 </templates>

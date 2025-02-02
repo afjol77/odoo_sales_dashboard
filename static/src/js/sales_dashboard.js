@@ -57,41 +57,77 @@ export class SalesDashboard extends Component {
         salesAmounts.push(this.monthly_sales[monthKey]);
     }
 
-    new Chart(this.canvasMonthlySales.el, {
+    const ctx = this.canvasMonthlySales.el.getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(89, 50, 234, 0.7)');
+    gradient.addColorStop(1, 'rgba(89, 50, 234, 0.1)');
+
+    new Chart(ctx, {
         type: 'line',
         data: {
             labels: monthNames,
             datasets: [{
-                label: 'Monthly Sales Performance',
+                label: 'Month',
                 data: salesAmounts,
                 fill: true,
+                backgroundColor: gradient,
                 borderColor: '#5932EA',
-                backgroundColor: 'rgba(89, 50, 234, 0.2)',
-                pointBackgroundColor: '#5932EA',
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#5932EA',
+                pointHoverBackgroundColor: '#FFD700',
+                pointHoverBorderColor: '#5932EA',
                 borderWidth: 2,
-                tension: 0.4
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom',
-                }
+                    labels: {
+                        font: {
+                            size: 14
+                        },
+                        color: '#333'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (tooltipItem) => {
+                            const value = tooltipItem.raw;
+                            return `${this.currency_symbol}${value.toLocaleString()}`;
+                        }
+                    },
+                    backgroundColor: '#5932EA',
+                    titleColor: '#FFFFFF',
+                    bodyColor: '#FFFFFF',
+                    borderColor: '#FFD700',
+                    borderWidth: 1
+                },
             },
             scales: {
                 x: {
-                    title: {
-                        display: true,
-                        text: 'Month'
+                    grid: {
+                        display: false
                     }
                 },
                 y: {
                     title: {
                         display: true,
-                        text: 'Sales Amount'
+                        text: `Sales Amount (${this.currency_symbol})`,
+                        font: {
+                            size: 16
+                        },
+                        color: '#333'
                     },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(89, 50, 234, 0.1)'
+                    }
                 }
             }
         }
@@ -107,7 +143,7 @@ export class SalesDashboard extends Component {
         .slice(0, 5);
 
     topProducts.forEach(product => {
-        productNames.push(product.product_name);
+        productNames.push(product.product_name.length > 10 ? product.product_name.slice(0, 10) + '...' : product.product_name);
         productRevenues.push(product.revenue);
     });
 
@@ -144,18 +180,9 @@ export class SalesDashboard extends Component {
                 tooltip: {
                     callbacks: {
                         label: (context) => `${this.currency_symbol}${context.raw.toLocaleString()}`,
-                        title: (context) => context[0].label,
+                        title: (context) => this.top_selling_products[context[0].dataIndex].product_name,
                     }
                 },
-                title: {
-                    display: true,
-                    text: 'Top 5 Products by Revenue',
-                    font: {
-                        size: 18,
-                        weight: 'bold'
-                    },
-                    color: '#2C3E50'
-                }
             },
             layout: {
                 padding: {
@@ -183,7 +210,8 @@ export class SalesDashboard extends Component {
                             size: 12,
                             weight: '600'
                         },
-                        color: '#333'
+                        color: '#333',
+                        callback: (value) => productNames[value]
                     }
                 },
                 y: {
@@ -212,8 +240,7 @@ export class SalesDashboard extends Component {
             }
         }
     });
-    }
-
+}
 
     renderFulfillmentEfficiency() {
     const onTimeCount = this.fulfillment_efficiency.on_time_count;
@@ -229,9 +256,11 @@ export class SalesDashboard extends Component {
         data: {
             labels: ['On-time Deliveries', 'Delayed Deliveries'],
             datasets: [{
-                data: [efficiencyPercentage, 100 - efficiencyPercentage],
+                data: [onTimeCount, delayedCount],
                 backgroundColor: ['#4CAF50', '#FF6F61'], // Green for on-time, red for delayed
-                borderWidth: 0
+                hoverBackgroundColor: ['#66BB6A', '#FF8A80'],
+                borderWidth: 2,
+                borderColor: '#fff'
             }]
         },
         options: {
@@ -241,62 +270,122 @@ export class SalesDashboard extends Component {
                     position: 'top',
                     labels: {
                         boxWidth: 20,
-                        padding: 10
+                        padding: 10,
+                        color: '#333',
+                        font: {
+                            size: 14
+                        }
                     }
                 },
                 tooltip: {
-                    enabled: true
+                    callbacks: {
+                        label: (context) => `${context.label}: ${context.raw} deliveries`
+                    },
+                    backgroundColor: '#444',
+                    titleColor: '#FFF',
+                    bodyColor: '#FFF',
+                    borderColor: '#CCC',
+                    borderWidth: 1
                 },
                 title: {
                     display: true,
-                    text: `Fulfillment Efficiency: ${efficiencyPercentage.toFixed(2)}%`
+                    text: `Efficiency: ${efficiencyPercentage.toFixed(2)}%`,
+                    color: '#2C3E50',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
                 }
+            },
+            layout: {
+                padding: 15
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true
             }
         }
     });
-    }
+}
 
     renderSalesByCustomer() {
     const customers = this.sales_by_customer.map(item => item.customer_name);
     const salesVolumes = this.sales_by_customer.map(item => item.sales_volume);
 
     new Chart(this.canvasSalesByCustomer.el, {
-    type: 'bar',
-    data: {
-        labels: customers,
-        datasets: [{
-            label: 'Sales Volume',
-            data: salesVolumes,
-            backgroundColor: '#42A5F5',
-            borderColor: '#1E88E5',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        indexAxis: 'y', // This flips the axes to create a horizontal bar chart
-        scales: {
-            x: {
-                beginAtZero: true
-            }
+        type: 'bar',
+        data: {
+            labels: customers,
+            datasets: [{
+                label: `Sales Volume (${this.currency_symbol})`,
+                data: salesVolumes,
+                backgroundColor: '#42A5F5',
+                borderColor: '#1E88E5',
+                borderWidth: 1,
+                hoverBackgroundColor: '#90CAF9',
+                hoverBorderColor: '#1565C0'
+            }]
         },
-        plugins: {
-            legend: {
-                display: false
+        options: {
+            responsive: true,
+            indexAxis: 'y',
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: `Sales Volume (${this.currency_symbol})`,
+                        font: {
+                            size: 14
+                        },
+                        color: '#555'
+                    },
+                    ticks: {
+                        callback: (value) => `${this.currency_symbol}${value.toLocaleString()}`,
+                        color: '#333',
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        }
+                    },
+                    grid: {
+                        color: '#eee',
+                        borderColor: '#ddd'
+                    }
+                },
+                y: {
+                    ticks: {
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        },
+                        color: '#333'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
             },
-            tooltip: {
-                enabled: true
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => `${this.currency_symbol}${context.raw.toLocaleString()}`
+                    }
+                },
             },
-            title: {
-                display: true,
-                text: 'Key Customers by Sales Volume'
+            layout: {
+                padding: 15
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeOutBounce'
             }
         }
-    }
     });
-
-
-    }
+}
 
 }
 SalesDashboard.template = 'sales_dashboard';
