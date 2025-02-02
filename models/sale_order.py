@@ -84,10 +84,13 @@ class SaleOrder(models.Model):
             'confirmed_sales': self.env['sale.order'].search_count([('state', '=', 'sale')])
         }
 
-        # Conversion Rate
-        conversion_count = sales_funnel['confirmed_sales']
-        total_opportunities = sales_funnel['opportunities']
-        conversion_rate = (conversion_count / total_opportunities * 100) if total_opportunities > 0 else 0
+        # Conversion Rate (only count opportunities that converted to sales)
+        converted_opportunities = self.env['crm.lead'].search_count([
+            ('type', '=', 'opportunity'),
+            ('probability', '=', 100),  # Closed Won Opportunities
+            ('order_ids.state', '=', 'sale')  # Ensure linked sales orders are confirmed
+        ])
+        conversion_rate = (converted_opportunities / sales_funnel['opportunities'] * 100) if sales_funnel['opportunities'] > 0 else 0
 
         # Lead-to-Order Time
         lead_to_order_times = []
