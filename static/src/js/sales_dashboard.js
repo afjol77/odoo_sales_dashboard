@@ -21,13 +21,15 @@ export class SalesDashboard extends Component {
         onWillStart(async () => {
             await loadBundle("web.chartjs_lib");
             await this.orm.call( 'sale.order', 'get_sales_dashboard_data').then((data) => {
-                    // Charts Section
                    this.total_sales_amount = data.total_sales_amount;
                    this.monthly_sales = data.monthly_sales;
                    this.top_selling_products = data.top_selling_products;
                    this.fulfillment_efficiency = data.fulfillment_efficiency;
                    this.sales_by_customer = data.sales_by_customer;
-                   this.sales_funnel = data.sales_funnel;
+                   this.leads = data.leads;
+                   this.opportunities = data.opportunities;
+                   this.quotations = data.quotations;
+                   this.confirmed_sales = data.confirmed_sales;
                    this.conversion_rate = data.conversion_rate;
                    this.average_lead_to_order_time = data.average_lead_to_order_time;
                    this.average_profit_margin = data.average_profit_margin;

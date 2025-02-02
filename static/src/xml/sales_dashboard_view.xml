@@ -9,7 +9,7 @@
     </t>
 
     <t t-name="sales-section" owl="1">
-        <section id="sales_section" class="dashboard-container container">
+        <section id="sales_section" class="dashboard-container">
             <t t-call="sales_cards"/>
 
             <!-- Charts Section: Second Row (col-lg-6 for each canvas) -->
@@ -34,57 +34,111 @@
 
     <t t-name="sales_cards">
     <!-- First Row: Total Sales and Operational Metrics -->
-    <div class="row mb-4">
+    <div class="row mb-3">
         <!-- Total Sales Card -->
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card sales-card light-blue">
-                <h3>Total Sales Amount</h3>
-                <i class="fa fa-dollar sales-card-icon"></i>
-                <p class="sales-card-amount"><t t-esc="total_sales_amount"/></p>
-            </div>
-        </div>
-
-        <!-- Conversion Rate Card -->
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card sales-card light-green">
-                <h3>Conversion Rate</h3>
-                <i class="fa fa-percent sales-card-icon"></i>
-                <p><t t-esc="conversion_rate"/></p>
-            </div>
-        </div>
-
-        <!-- Average Lead to Order Time Card -->
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card sales-card light-yellow">
-                <h3>Average Lead to Order Time</h3>
-                <i class="fa fa-clock sales-card-icon"></i>
-                <p><t t-esc="average_lead_to_order_time"/></p>
+                <div>
+                    <h3>Total Sales</h3>
+                    <i class="fa fa-dollar sales-card-icon"></i>
+                </div>
+                <div class="card-data">
+                    <p><t t-esc="total_sales_amount" /></p>
+                </div>
             </div>
         </div>
 
         <!-- Average Profit Margin Card -->
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card sales-card light-orange">
-                <h3>Average Profit Margin</h3>
-                <i class="fa fa-dollar-sign sales-card-icon"></i>
-                <p><t t-esc="average_profit_margin"/></p>
+                <div>
+                    <h3>Average Profit Margin</h3>
+                    <i class="fa fa-dollar sales-card-icon"></i>
+                </div>
+                <div class="card-data">
+                    <p><t t-esc="average_profit_margin" /></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversion Rate Card -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card sales-card light-green">
+                <div>
+                    <h3>Conversion Rate</h3>
+                    <i class="fa fa-dollar sales-card-icon"></i>
+                </div>
+                <div class="card-data">
+                    <p><t t-esc="conversion_rate" /></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Average Lead to Order Time Card -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card sales-card light-yellow">
+                <div>
+                    <h3>Average Lead to Order Time</h3>
+                    <i class="fa fa-dollar sales-card-icon"></i>
+                </div>
+                <div class="card-data">
+                    <p><t t-esc="average_lead_to_order_time" /></p>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Second Row: Sales Funnel Data -->
-    <div class="row sales-funnel-section">
-        <t t-foreach="sales_funnel" t-as="funnel" t-key="funnel.id">
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="card sales-card light-purple">
-                    <h3><t t-esc="funnel.name"/></h3>
-                    <i class="fa fa-lead funnel-icon"></i>
-                    <p class="funnel-count"><t t-esc="funnel.count"/></p>
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card sales-card light-blue">
+                <div>
+                    <h3>Leads</h3>
+                    <i class="fa fa-dollar sales-card-icon"></i>
+                </div>
+                <div class="card-data">
+                    <p><t t-esc="leads" /></p>
                 </div>
             </div>
-        </t>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card sales-card light-blue">
+                <div>
+                    <h3>Opportunities</h3>
+                    <i class="fa fa-dollar sales-card-icon"></i>
+                </div>
+                <div class="card-data">
+                    <p><t t-esc="opportunities" /></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card sales-card light-blue">
+                <div>
+                    <h3>Quotations</h3>
+                    <i class="fa fa-dollar sales-card-icon"></i>
+                </div>
+                <div class="card-data">
+                    <p><t t-esc="quotations" /></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card sales-card light-blue">
+                <div>
+                    <h3>Confirmed Sales</h3>
+                    <i class="fa fa-dollar sales-card-icon"></i>
+                </div>
+                <div class="card-data">
+                    <p><t t-esc="confirmed_sales" /></p>
+                </div>
+            </div>
+        </div>
     </div>
-</t>
+    </t>
 
 
 

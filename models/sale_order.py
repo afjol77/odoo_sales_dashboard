@@ -152,12 +152,10 @@ class SaleOrder(models.Model):
                 'efficiency_percentage': efficiency_percentage
             },
             'sales_by_customer': sales_by_customer,
-            'sales_funnel':  [
-                        {'id': 1,'name': 'Leads', 'count': sales_funnel['leads']},
-                        {'id': 2,'name': 'Opportunities', 'count': sales_funnel['opportunities']},
-                        {'id': 3,'name': 'Quotations', 'count': sales_funnel['quotations']},
-                        {'id': 4,'name': 'Confirmed Sales', 'count': sales_funnel['confirmed_sales']},
-                    ],
+            'leads': sales_funnel['leads'],
+            'opportunities': sales_funnel['opportunities'],
+            'quotations': sales_funnel['quotations'],
+            'confirmed_sales': sales_funnel['confirmed_sales'],
             'conversion_rate': round(conversion_rate, 2),
             'average_lead_to_order_time': round(average_lead_to_order_time, 2),
             'average_profit_margin': round(average_profit_margin, 2),
