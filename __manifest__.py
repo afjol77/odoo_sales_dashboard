@@ -17,8 +17,7 @@
         'web.assets_backend': [
             'odoo_sales_dashboard/static/src/js/sales_dashboard.js',
             'odoo_sales_dashboard/static/src/xml/sales_dashboard_view.xml',
-        ],
-        'web.assets_qweb': [
+            'odoo_sales_dashboard/static/src/css/sales_dashboard.css',
         ],
     },
     'application': True,

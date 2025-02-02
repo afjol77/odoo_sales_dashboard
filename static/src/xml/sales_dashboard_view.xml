@@ -10,16 +10,17 @@
 
     <t t-name="sales-section" owl="1">
         <section id="sales_section" class="dashboard-container">
+            <h2 class="text-center fw-bold mb-4" style="font-size: 24px;">Sales Dashboard</h2>
             <t t-call="sales_cards"/>
             <t t-call="sales_charts"/>
             <t t-call="top_sales_reps_section"/>
         </section>
     </t>
 
-<!--    Sales Cards-->
-    <t t-name="sales_cards">
+<!-- Sales Cards-->
+<t t-name="sales_cards">
     <div class="row mb-3">
-        <div class="col-lg-3 col-md-6 mb-3">
+        <div class="col-lg-6 col-md-6 mb-3">
             <div class="card sales-card light-blue">
                 <div>
                     <h3>Total Sales</h3>
@@ -32,10 +33,10 @@
         </div>
 
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card sales-card light-orange">
+            <div class="card sales-card light-green">
                 <div>
                     <h3>Average Profit Margin</h3>
-                    <i class="fa fa-dollar sales-card-icon"></i>
+                    <i class="fa fa-line-chart  sales-card-icon"></i>
                 </div>
                 <div class="card-data">
                     <p><t t-esc="average_profit_margin" /></p>
@@ -46,8 +47,8 @@
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card sales-card light-green">
                 <div>
-                    <h3>Conversion Rate</h3>
-                    <i class="fa fa-dollar sales-card-icon"></i>
+                    <h3>Lead to Sales Conversion Rate</h3>
+                    <i class="fa fa-arrow-right sales-card-icon"></i>
                 </div>
                 <div class="card-data">
                     <p><t t-esc="conversion_rate" /></p>
@@ -55,27 +56,15 @@
             </div>
         </div>
 
-        <!-- Average Lead to Order Time Card -->
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card sales-card light-yellow">
-                <div>
-                    <h3>Average Lead to Order Time</h3>
-                    <i class="fa fa-dollar sales-card-icon"></i>
-                </div>
-                <div class="card-data">
-                    <p><t t-esc="average_lead_to_order_time" /></p>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Second Row: Sales Funnel Data -->
-    <div class="row mb-4">
+    <div class="row mb-5">
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card sales-card light-blue">
+            <div class="card sales-card light-orange" t-on-click="_onClickLeads">
                 <div>
                     <h3>Leads</h3>
-                    <i class="fa fa-dollar sales-card-icon"></i>
+                    <i class="fa fa-users sales-card-icon"></i>
                 </div>
                 <div class="card-data">
                     <p><t t-esc="leads" /></p>
@@ -84,10 +73,10 @@
         </div>
 
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card sales-card light-blue">
+            <div class="card sales-card light-yellow" t-on-click="_onClickOpportunities">
                 <div>
                     <h3>Opportunities</h3>
-                    <i class="fa fa-dollar sales-card-icon"></i>
+                    <i class="fa fa-briefcase sales-card-icon"></i>
                 </div>
                 <div class="card-data">
                     <p><t t-esc="opportunities" /></p>
@@ -96,10 +85,10 @@
         </div>
 
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card sales-card light-blue">
+            <div class="card sales-card light-blue" t-on-click="_onClickQuotations">
                 <div>
                     <h3>Quotations</h3>
-                    <i class="fa fa-dollar sales-card-icon"></i>
+                    <i class="fa fa-file sales-card-icon"></i>
                 </div>
                 <div class="card-data">
                     <p><t t-esc="quotations" /></p>
@@ -108,10 +97,10 @@
         </div>
 
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card sales-card light-blue">
+            <div class="card sales-card light-green" t-on-click="_onClickSales">
                 <div>
                     <h3>Confirmed Sales</h3>
-                    <i class="fa fa-dollar sales-card-icon"></i>
+                    <i class="fa fa-check-circle sales-card-icon"></i>
                 </div>
                 <div class="card-data">
                     <p><t t-esc="confirmed_sales" /></p>
@@ -120,6 +109,7 @@
         </div>
     </div>
     </t>
+
 
 
     <!-- Sales Charts Section -->

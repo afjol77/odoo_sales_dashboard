@@ -18,7 +18,7 @@ class SaleOrder(models.Model):
             monthly_sales[month] = monthly_sales.get(month, 0) + order.amount_total
             total_sales_amount += order.amount_total
 
-        # Top Selling Products by Quantity/Revenue (limit to top 10)
+        # Top Selling Products
         sale_lines = self.env['sale.order.line'].search([('order_id.state', '=', 'sale')])
         product_sales = {}
         for line in sale_lines:
@@ -32,7 +32,6 @@ class SaleOrder(models.Model):
             product_sales[product_id]['quantity'] += line.product_uom_qty
             product_sales[product_id]['revenue'] += line.price_total
 
-        # Sort by revenue and limit to top 10
         top_selling_products = sorted(product_sales.values(), key=lambda x: x['revenue'], reverse=True)[:5]
 
         # Sales Fulfillment Efficiency
@@ -84,24 +83,19 @@ class SaleOrder(models.Model):
             'confirmed_sales': self.env['sale.order'].search_count([('state', '=', 'sale')])
         }
 
-        # Conversion Rate (only count opportunities that converted to sales)
-        converted_opportunities = self.env['crm.lead'].search_count([
+        # Conversion Rate (Only count opportunities that converted to sales)
+        total_opportunities = self.env['crm.lead'].search_count([
+            ('type', '=', 'opportunity'),
+        ])
+
+        won_opportunities = self.env['crm.lead'].search_count([
             ('type', '=', 'opportunity'),
             ('probability', '=', 100),  # Closed Won Opportunities
             ('order_ids.state', '=', 'sale')  # Ensure linked sales orders are confirmed
         ])
-        conversion_rate = (converted_opportunities / sales_funnel['opportunities'] * 100) if sales_funnel['opportunities'] > 0 else 0
 
-        # Lead-to-Order Time
-        lead_to_order_times = []
-        crm_records = self.env['crm.lead'].search([('probability', '=', 100)])  # Closed opportunities
-        for record in crm_records:
-            lead_creation_date = record.create_date
-            sale_order = self.env['sale.order'].search([('origin', '=', record.name), ('state', '=', 'sale')], limit=1)
-            if sale_order and sale_order.date_order:
-                lead_to_order_time = (sale_order.date_order - lead_creation_date).days
-                lead_to_order_times.append(lead_to_order_time)
-        average_lead_to_order_time = sum(lead_to_order_times) / len(lead_to_order_times) if lead_to_order_times else 0
+        # Calculate conversion rate
+        conversion_rate = (won_opportunities / total_opportunities * 100) if total_opportunities > 0 else 0
 
         # Profit Margin per Sale
         profit_margins = []
@@ -157,7 +151,6 @@ class SaleOrder(models.Model):
             'quotations': sales_funnel['quotations'],
             'confirmed_sales': sales_funnel['confirmed_sales'],
             'conversion_rate': round(conversion_rate, 2),
-            'average_lead_to_order_time': round(average_lead_to_order_time, 2),
             'average_profit_margin': round(average_profit_margin, 2),
             'top_sales_reps': top_sales_reps,
             'currency_symbol': currency,

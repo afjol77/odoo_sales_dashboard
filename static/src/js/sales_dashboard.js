@@ -1,7 +1,6 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { session } from "@web/session";
 import { Widget } from "@web/views/widgets/widget";
 import { loadJS, loadBundle } from "@web/core/assets";
 import { useEffect, useService } from "@web/core/utils/hooks";
@@ -31,7 +30,6 @@ export class SalesDashboard extends Component {
                    this.quotations = data.quotations;
                    this.confirmed_sales = data.confirmed_sales;
                    this.conversion_rate = data.conversion_rate;
-                   this.average_lead_to_order_time = data.average_lead_to_order_time;
                    this.average_profit_margin = data.average_profit_margin;
                    this.top_sales_reps = data.top_sales_reps;
                    this.currency_symbol = data.currency_symbol;
@@ -44,6 +42,55 @@ export class SalesDashboard extends Component {
                 this.renderFulfillmentEfficiency();
                 this.renderSalesByCustomer();
         })
+    }
+
+    _onClickLeads() {
+        this.env.services.action.doAction({
+            name: _t("Leads"),
+            type: 'ir.actions.act_window',
+            res_model: 'crm.lead',
+            view_mode: 'tree',
+            views: [[false, 'list']],
+            target: 'current',
+            domain: [['type', '=', 'lead']],
+        });
+    }
+
+    _onClickOpportunities() {
+        this.env.services.action.doAction({
+            name: _t("Opportunities"),
+            type: 'ir.actions.act_window',
+            res_model: 'crm.lead',
+            view_mode: 'tree',
+            views: [[false, 'list']],
+            target: 'current',
+            domain: [['type', '=', 'opportunity']],
+        });
+    }
+
+
+    _onClickQuotations() {
+        this.env.services.action.doAction({
+            name: _t("Quotations"),
+            type: 'ir.actions.act_window',
+            res_model: 'sale.order',
+            view_mode: 'tree',
+            views: [[false, 'list']],
+            target: 'current',
+            domain: [['state', '=', 'draft']],
+        });
+    }
+
+    _onClickSales() {
+        this.env.services.action.doAction({
+            name: _t("Confirmed Sales"),
+            type: 'ir.actions.act_window',
+            res_model: 'sale.order',
+            view_mode: 'tree',
+            views: [[false, 'list']],
+            target: 'current',
+            domain: [['state', '=', 'sale']],
+        });
     }
 
     renderMonthlySales() {
