@@ -27,7 +27,7 @@
                     <i class="fa fa-dollar sales-card-icon"></i>
                 </div>
                 <div class="card-data">
-                    <p><t t-esc="total_sales_amount" /></p>
+                    <p><t t-esc="currency_symbol"/> <t t-esc="total_sales_amount" /></p>
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@
                     <i class="fa fa-line-chart  sales-card-icon"></i>
                 </div>
                 <div class="card-data">
-                    <p><t t-esc="average_profit_margin" /></p>
+                    <p><t t-esc="currency_symbol"/><t t-esc="average_profit_margin" /></p>
                 </div>
             </div>
         </div>
@@ -48,10 +48,10 @@
             <div class="card sales-card light-green">
                 <div>
                     <h3>Lead to Sales Conversion Rate</h3>
-                    <i class="fa fa-arrow-right sales-card-icon"></i>
+                    <i class="fa fa-percent sales-card-icon"></i>
                 </div>
                 <div class="card-data">
-                    <p><t t-esc="conversion_rate" /></p>
+                    <p><t t-esc="conversion_rate"/><span>%</span></p>
                 </div>
             </div>
         </div>
